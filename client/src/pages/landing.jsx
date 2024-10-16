@@ -5,8 +5,8 @@ import Signup from "../components/signup"
 const Landing = () => {
     return(
         <>
-        <Login/>
-        {/* <Signup/> */}
+        {/* <Login/> */}
+        <Signup/>
         </>
     )
 }
