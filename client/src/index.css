@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.background-image-signup{
+    background-image: url('../public/images/background-image.jpeg'); /* Replace with your image path */
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    /* opacity: 0.8; */
+}
