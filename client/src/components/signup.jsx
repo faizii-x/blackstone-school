@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
 
@@ -13,8 +13,10 @@ const Signup = () => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
   };
 
+const navigate = useNavigate();
+
   const handleSignUp = (e) => {
-    e.preventDefault();
+    e.preventDefault();``
     console.log("hello jannnn");
     axios
       .post(`${import.meta.env.VITE_SERVER_URL}/api/signup`, userData)
@@ -23,6 +25,7 @@ const Signup = () => {
         if(response.data.success) {
           setUserData({ name: "", email: "", password: "" });
           alert(response.data.message)
+          navigate("/login")
         }
         else{
           alert(response.data.message)

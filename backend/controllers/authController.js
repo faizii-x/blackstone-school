@@ -1,5 +1,7 @@
 // /controllers/authController.js
 const User = require("../models/user");
+const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken")
 
 // Signup a new user
 const signup = async (req, res) => {
@@ -25,25 +27,36 @@ const signup = async (req, res) => {
   }
 };
 
-// Login an existing user
+
 const login = async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
+
 
   try {
-    const user = await User.findOne({ username });
+    // Find the user in the database
+    const user = await User.findOne({ email });
     if (!user) {
-      return res.json({ success:false , message: "Invalid credentials" });
+      return res.json({ success: false, message: "User not found" });
     }
 
-    const isMatch = await user.comparePassword(password);
+    // Compare the provided password with the hashed password in the database
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.json({ success:false, message: "Invalid credentials" });
+      return res.json({ success: false, message: "Invalid credentials" });
     }
 
-    // Respond with user role
-    res.json({ success:true, message: "Login successful", role: user.role });
+    const { name, email: userEmail, role,  } = user;
+
+    const payload = { userId: user._id, name, userEmail, role };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '3m' });
+
+    // If passwords match, continue with login
+    return res.json({ success: true, message: "Login successful",token, user:{name, userEmail, role} });
+
   } catch (error) {
-    res.json({success:false, message: "Error logging in user", error });
+    console.log('Login Error: ', error);
+    res.json({ success: false, message: "Server error" });
   }
 };
 
