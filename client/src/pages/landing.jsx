@@ -1,10 +1,11 @@
+import Signup from "../components/signup";
 
 const Landing = () => {
-    return(
-        <>
-       <h4>Dashboard</h4>
-        </>
-    )
-}
+  return (
+    <>
+      <Signup />
+    </>
+  );
+};
 
-export default Landing
+export default Landing;

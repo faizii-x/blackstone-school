@@ -3,7 +3,10 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 
-// Signup a new user
+const SECRET_KEY = "process.env.SECRET_KEY";
+
+
+// Signup Function
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -27,31 +30,31 @@ const signup = async (req, res) => {
   }
 };
 
-
+// Login Function
 const login = async (req, res) => {
   const { email, password } = req.body;
 
 
   try {
-    // Find the user in the database
+    // Find user in DB
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({ success: false, message: "User not found" });
+      return res.json({ success: false, message: "Email does not exist" });
     }
 
-    // Compare the provided password with the hashed password in the database
+    // Compare password with hash password in DB
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.json({ success: false, message: "Invalid credentials" });
+      return res.json({ success: false, message: "Incorrect Password" });
     }
 
     const { name, email: userEmail, role,  } = user;
 
     const payload = { userId: user._id, name, userEmail, role };
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '3m' });
+    const token = jwt.sign(payload, process.env.JWT_SECRET);
 
-    // If passwords match, continue with login
+    // If password match, then login
     return res.json({ success: true, message: "Login successful",token, user:{name, userEmail, role} });
 
   } catch (error) {
@@ -59,5 +62,8 @@ const login = async (req, res) => {
     res.json({ success: false, message: "Server error" });
   }
 };
+
+
+
 
 module.exports = { signup, login };
